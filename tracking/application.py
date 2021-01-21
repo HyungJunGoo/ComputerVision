@@ -12,7 +12,7 @@ def detect_face(frame):
 
     #face_detector = FaceDetector(casc_path)
     face_detector = FaceDetector()
-    faceRects, num_faces = face_detector.detect(grey, scaleFactor=1.1, minNeighbors=5, minSize=(10,10))
+    faceRects, num_faces = face_detector.detect(grey, scaleFactor=1.1, minNeighbors=5, minSize=(30,30))
     
     if num_faces == 0:
         return (), num_faces
@@ -31,16 +31,16 @@ def detect_face(frame):
 
 # Check if the tracking window is in the area
 def pts_in_area(pts, area):
-    print(f"pts : {pts}")
+    # print(f"pts : {pts}")
     x_c = (pts[0][0] + pts[2][0])/2
     y_c = (pts[0][1] + pts[1][1])/2
-    print(f"xc, yc: {x_c, y_c}")
+    # print(f"xc, yc: {x_c, y_c}")
     pts_h = abs(pts[0][1] - pts[1][1])
     pts_w = abs(pts[1][0] - pts[2][0])
 
     area_w = (area[0][0], area[1][0])
     area_h = (area[0][1], area[1][1])
-    if( (x_c >= 0 and x_c <= 1280) and (y_c >= 0 and y_c<= 720)):
+    if( (x_c >= 50 and x_c <= 1230) and (y_c >= 50 and y_c<= 670)):
         return True
     
     return False
@@ -70,22 +70,18 @@ def main():
                 t = 0 
             else:
                 t += 1
-            # print(f"roi: {roi}")
         else:
             
             # CamShift
-            # Todo -> frame size
-            # pts must be keep tracked
-            print(f"roipts: {roiPts}")
-            # searchPts = 
-            hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
-            
+            # print(f"roipts: {roiPts}")
+            print(f"x : {roiPts[0]}")
+            hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)    
             dst = cv2.calcBackProject([hsv], [0, 1], roi_hist, [0, 180, 0, 256], 1)
-            
-            
             ret, roiPts = cv2.CamShift(dst, roiPts, term_crit)
             pts = cv2.boxPoints(ret)
             pts = np.int0(pts)
+            for p in pts:
+                p
             if pts_in_area(pts, area) is False:
                 roi_hist = None
                 t=0
