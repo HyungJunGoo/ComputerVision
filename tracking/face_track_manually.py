@@ -113,8 +113,10 @@ def camShift():
             hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
             dst = cv2.calcBackProject([hsv], [0], roi_hist, [0, 180], 1)
             ret, trackWindow = cv2.CamShift(dst, trackWindow, termination)
+            print(f"trackwindow : {trackWindow}")
             pts = cv2.boxPoints(ret)
             pts = np.int0(pts)
+            print(f"pts : {pts}")
             cv2.polylines(frame, [pts], True, (0,255,0), 2)
 
         cv2.imshow("frame", frame)
